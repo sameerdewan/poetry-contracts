@@ -19,7 +19,7 @@ contract Poetry {
     constructor(string memory version) public {
         owner = msg.sender;
         contractVersion = version;
-    }
+    } 
 
     modifier onlyOwner() {
         require(msg.sender == owner, 'Error: Permissions @modifier::onlyOwner()');
