@@ -16,7 +16,7 @@ contract Poetry {
     mapping(string => bytes32[]) public users;
     mapping(string => uint256) public usersRecordCounts;
 
-    constructor(string calldata version) public {
+    constructor(string memory version) public {
         owner = msg.sender;
         contractVersion = version;
     }
@@ -44,7 +44,7 @@ contract Poetry {
         owner = newOwner;
     }
 
-    function compose(string calldata _username, string calldata _fileName, bytes32 _hash) external onlyAllowed doesNotExistAlready(_hash) {
+    function compose(string memory _username, string memory _fileName, bytes32 _hash) external onlyAllowed doesNotExistAlready(_hash) {
         hashRecords[_hash] = HashRecord({
             _username: _username,
             _fileName: _fileName,
