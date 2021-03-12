@@ -9,11 +9,11 @@ contract Poetry {
     struct HashRecord {
         string _username;
         string _fileName;
-        bytes32 _hash;
+        string _hash;
         bool _exists;
     }
-    mapping(bytes32 => HashRecord) public hashRecords;
-    mapping(string => bytes32[]) public users;
+    mapping(string => HashRecord) public hashRecords;
+    mapping(string => string[]) public users;
     mapping(string => uint256) public usersRecordCounts;
 
     constructor(string memory version) public {
@@ -31,7 +31,7 @@ contract Poetry {
         _;
     }
 
-    modifier doesNotExistAlready(bytes32 _hash) {
+    modifier doesNotExistAlready(string memory _hash) {
         require(hashRecords[_hash]._exists == false, 'Error: Hash exists @modifier::doesNotExistAlready()');
         _;
     }
@@ -44,7 +44,7 @@ contract Poetry {
         owner = newOwner;
     }
 
-    function compose(string memory _username, string memory _fileName, bytes32 _hash) external onlyAllowed doesNotExistAlready(_hash) {
+    function compose(string memory _username, string memory _fileName, string memory _hash) external onlyAllowed doesNotExistAlready(_hash) {
         hashRecords[_hash] = HashRecord({
             _username: _username,
             _fileName: _fileName,
@@ -55,7 +55,7 @@ contract Poetry {
         usersRecordCounts[_username] = usersRecordCounts[_username] + 1;
     }
 
-    function getRecord(bytes32 _hash) external view returns(bytes32, string memory, string memory, bool) {
+    function getRecord(string memory _hash) external view returns(string memory, string memory, string memory, bool) {
         string memory _username = hashRecords[_hash]._username;
         string memory _fileName = hashRecords[_hash]._fileName;
         bool _exists = hashRecords[_hash]._exists;
