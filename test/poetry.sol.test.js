@@ -28,7 +28,11 @@ contract('Poetry', async (accounts) => {
         } catch {}
         assert.equal(didDeploy, true);
     });
-    it('Poetry contract version should equal constructor passed contract version');
+    it('Poetry contract version should equal constructor passed contract version', async () => {
+        const contract = await Poetry.new(version);
+        const contractVersion = await contract.contractVersion.call();
+        assert.equal(contractVersion, version);
+    });
     it('Poetry contract owner should equal test unit set owner', async () => {
         const contract = await Poetry.new(version, { from: owner });
         const contractOwner = await contract.owner.call();
