@@ -7,6 +7,10 @@ contract('Poetry', async (accounts) => {
     const transferredToOwner = accounts[3];
     const version = 'v1';
 
+    const username = 'username';
+    const fileName = 'file.pdf';
+    const hash = '02bc4a6398ba8baa247951acd0cd36b9171f7bbd1960b049bb83caf5037e5fa6';
+
     it('Poetry contract should require version field to deploy', async () => {
         let didNotDeploy = false;
         let errorMsg;
@@ -106,7 +110,28 @@ contract('Poetry', async (accounts) => {
         assert.equal(failedToTransferOwnerPostPermission, true);
         assert.equal(errorMsg2.includes('Error: Permissions @modifier::onlyOwner()'), true);
     });
-    it('Owner can call compose() and can successfully create a proof, tested by calling getRecord()');
+    it('Owner can call compose() and can successfully create a proof, tested by calling getRecord()', async () => {
+        const contract = await Poetry.new(version);
+        let canCallCompose = false, canCallGetRecord = false, record = {};
+        try {
+            await contract.compose(username, fileName, hash);
+            canCallCompose = true;
+        } catch {}
+        try {
+            const response = await contract.getRecord(hash);
+            canCallGetRecord = true;
+            record.username = response[0];
+            record.fileName = response[1];
+            record.hash = response[2];
+            record.exists = response[3];
+        } catch {}
+        assert.equal(canCallCompose, true);
+        assert.equal(canCallGetRecord, true);
+        assert.equal(record.username, username);
+        assert.equal(record.fileName, fileName);
+        assert.equal(record.hash, hash);
+        assert.equal(record.exists, true);
+    });
     it('Allowed can call compose() and can successfully create a proof, tested by calling getRecord()');
     it('Unallowed can not call compose()');
     it('Unallowed can call getRecord()');

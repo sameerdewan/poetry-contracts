@@ -59,6 +59,6 @@ contract Poetry {
         string memory _username = hashRecords[_hash]._username;
         string memory _fileName = hashRecords[_hash]._fileName;
         bool _exists = hashRecords[_hash]._exists;
-        return(_hash, _username, _fileName, _exists);
+        return(_username, _fileName, _hash, _exists);
     }
 }
