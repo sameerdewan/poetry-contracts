@@ -1,4 +1,3 @@
-const truffleAssert = require('truffle-assertions');
 const Poetry = artifacts.require('Poetry');
 
 contract('Poetry', async (accounts) => {
