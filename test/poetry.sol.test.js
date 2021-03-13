@@ -46,4 +46,26 @@ contract('Poetry', async (accounts) => {
         const permissionsPostGrant = await contract.allowed.call(allowed);
         assert.equal(permissionsPostGrant, true);
     });
+    it('Allowed cannot call setPermissions(), with or without permissions', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        let prePermissionCallSucceeded = true, postPermissionCall = true;
+        let errorMsg1 = '', errorMsg2 = '';
+        try {
+            await contract.setPermissions(allowed, true, { from: allowed });
+        } catch (error) {
+            prePermissionCallSucceeded = false;
+            errorMsg1 = error.message;
+        }
+        try {
+            await contract.setPermissions(allowed, true);
+            await contract.setPermissions(allowed, true, { from: allowed });
+        } catch (error) {
+            postPermissionCall = false;
+            errorMsg2 = error.message;
+        }
+        assert.equal(prePermissionCallSucceeded, false);
+        assert.equal(errorMsg1.includes('Error: Permissions @modifier::onlyOwner()'), true);
+        assert.equal(postPermissionCall, false);
+        assert.equal(errorMsg2.includes('Error: Permissions @modifier::onlyOwner()'), true);
+    });
 });
