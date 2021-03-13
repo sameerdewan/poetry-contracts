@@ -74,8 +74,39 @@ contract('Poetry', async (accounts) => {
         assert.equal(postPermissionCall, false);
         assert.equal(errorMsg2.includes('Error: Permissions @modifier::onlyOwner()'), true);
     });
-    it('Owner can call transferOwner() and successfully transfer the owner to test unit transferredToOwner');
-    it('Allowed cannot call transferOwner(), with or without permissions');
+    it('Owner can call transferOwner() and successfully transfer the owner to test unit transferredToOwner', async () => {
+        const contract = await Poetry.new(version);
+        let calledTransferOwnerSuccessfully = false;
+        try {
+            await contract.transferOwner(transferredToOwner);
+            calledTransferOwnerSuccessfully = true;
+        } catch {}
+        const newOwner = await contract.owner.call();
+        assert.equal(calledTransferOwnerSuccessfully, true);
+        assert.equal(newOwner, transferredToOwner);
+    });
+    it('Allowed cannot call transferOwner(), with or without permissions', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        let failedToTransferOwnerPrePermission = false, failedToTransferOwnerPostPermission = false;
+        let errorMsg1 = '', errorMsg2 = '';
+        try {
+            await contract.transferOwner(transferredToOwner, { from: allowed });
+        } catch (error) {
+            failedToTransferOwnerPrePermission = true;
+            errorMsg1 = error.message;
+        }
+        try {
+            await contract.setPermissions(allowed, true, { from: owner });
+            await contract.transferOwner(allowed, { from: allowed });
+        } catch (error) {
+            failedToTransferOwnerPostPermission = true;
+            errorMsg2 = error.message;
+        }
+        assert.equal(failedToTransferOwnerPrePermission, true);
+        assert.equal(errorMsg1.includes('Error: Permissions @modifier::onlyOwner()'), true);
+        assert.equal(failedToTransferOwnerPostPermission, true);
+        assert.equal(errorMsg2.includes('Error: Permissions @modifier::onlyOwner()'), true);
+    });
     it('Owner can call compose() and can successfully create a proof, tested by calling getRecord()');
     it('Allowed can call compose() and can successfully create a proof, tested by calling getRecord()');
     it('Unallowed can not call compose()');
