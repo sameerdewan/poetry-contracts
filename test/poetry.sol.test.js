@@ -132,7 +132,29 @@ contract('Poetry', async (accounts) => {
         assert.equal(record.hash, hash);
         assert.equal(record.exists, true);
     });
-    it('Allowed can call compose() and can successfully create a proof, tested by calling getRecord()');
+    it('Allowed can call compose() and can successfully create a proof, tested by calling getRecord()', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        let canCallCompose = false, canCallGetRecord = false, record = {};
+        await contract.setPermissions(allowed, true, { from: owner });
+        try {
+            await contract.compose(username, fileName, hash, { from: allowed });
+            canCallCompose = true;
+        } catch {}
+        try {
+            const response = await contract.getRecord(hash, { from: allowed });
+            canCallGetRecord = true;
+            record.username = response[0];
+            record.fileName = response[1];
+            record.hash = response[2];
+            record.exists = response[3];
+        } catch {}
+        assert.equal(canCallCompose, true);
+        assert.equal(canCallGetRecord, true);
+        assert.equal(record.username, username);
+        assert.equal(record.fileName, fileName);
+        assert.equal(record.hash, hash);
+        assert.equal(record.exists, true);
+    });
     it('Unallowed can not call compose()');
     it('Unallowed can call getRecord()');
 });
