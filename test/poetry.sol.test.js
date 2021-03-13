@@ -155,6 +155,18 @@ contract('Poetry', async (accounts) => {
         assert.equal(record.hash, hash);
         assert.equal(record.exists, true);
     });
-    it('Unallowed can not call compose()');
+    it('Unallowed can not call compose()', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        let canCallCompose = true;
+        let errorMsg = '';
+        try {
+            await contract.compose(username, fileName, hash, { from: unallowed });
+        } catch (error) {
+            canCallCompose = false;
+            errorMsg = error.message;
+        }
+        assert.equal(canCallCompose, false);
+        assert.equal(errorMsg.includes('Error: Permissions @modifier::onlyAllowed()'), true);
+    });
     it('Unallowed can call getRecord()');
 });
