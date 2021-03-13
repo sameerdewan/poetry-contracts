@@ -168,5 +168,14 @@ contract('Poetry', async (accounts) => {
         assert.equal(canCallCompose, false);
         assert.equal(errorMsg.includes('Error: Permissions @modifier::onlyAllowed()'), true);
     });
-    it('Unallowed can call getRecord()');
+    it('Unallowed can call getRecord()', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        let canCallGetRecord = false;
+        await contract.compose(username, fileName, hash, { from: owner });
+        try {
+            await contract.getRecord(hash, { from: unallowed });
+            canCallGetRecord = true;
+        } catch {}
+        assert.equal(canCallGetRecord, true);
+    });
 });
