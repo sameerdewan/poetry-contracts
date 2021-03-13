@@ -5,6 +5,7 @@ contract('Poetry', async (accounts) => {
     const owner = accounts[0];
     const allowed = accounts[1];
     const unallowed = accounts[2];
+    const transferredToOwner = accounts[3];
     const version = 'v1';
 
     it('Poetry contract should require version field to deploy', async () => {
@@ -27,6 +28,7 @@ contract('Poetry', async (accounts) => {
         } catch {}
         assert.equal(didDeploy, true);
     });
+    it('Poetry contract version should equal constructor passed contract version');
     it('Poetry contract owner should equal test unit set owner', async () => {
         const contract = await Poetry.new(version, { from: owner });
         const contractOwner = await contract.owner.call();
@@ -68,4 +70,10 @@ contract('Poetry', async (accounts) => {
         assert.equal(postPermissionCall, false);
         assert.equal(errorMsg2.includes('Error: Permissions @modifier::onlyOwner()'), true);
     });
+    it('Owner can call transferOwner() and successfully transfer the owner to test unit transferredToOwner');
+    it('Allowed cannot call transferOwner(), with or without permissions');
+    it('Owner can call compose() and can successfully create a proof, tested by calling getRecord()');
+    it('Allowed can call compose() and can successfully create a proof, tested by calling getRecord()');
+    it('Unallowed can not call compose()');
+    it('Unallowed can call getRecord()');
 });
