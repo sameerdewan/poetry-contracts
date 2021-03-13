@@ -32,10 +32,18 @@ contract('Poetry', async (accounts) => {
         const contractOwner = await contract.owner.call();
         assert.equal(owner, contractOwner);
     });
-    it('Poetry contract owner should not equal any other address other than test unit set owner', async () => {
+    it('Poetry contract owner should not equal any other address other than test unit owner', async () => {
         const contract = await Poetry.new(version, { from: owner });
         const contractOwner = await contract.owner.call();
         assert.notEqual(contractOwner, allowed);
         assert.notEqual(contractOwner, unallowed);
+    });
+    it('Owner can call setPermissions() and successfully set permissions for test unit allowed', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        const permissionsPreGrant = await contract.allowed.call(allowed);
+        assert.equal(permissionsPreGrant, false);
+        await contract.setPermissions(allowed, true);
+        const permissionsPostGrant = await contract.allowed.call(allowed);
+        assert.equal(permissionsPostGrant, true);
     });
 });

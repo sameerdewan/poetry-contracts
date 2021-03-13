@@ -4,7 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 contract Poetry {
     address public owner;
     string public contractVersion;
-    mapping(address => bool) allowed;
+    mapping(address => bool) public allowed;
 
     struct HashRecord {
         string _username;
