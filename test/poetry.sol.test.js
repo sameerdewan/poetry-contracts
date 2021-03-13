@@ -27,4 +27,15 @@ contract('Poetry', async (accounts) => {
         } catch {}
         assert.equal(didDeploy, true);
     });
+    it('Poetry contract owner should equal test unit set owner', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        const contractOwner = await contract.owner.call();
+        assert.equal(owner, contractOwner);
+    });
+    it('Poetry contract owner should not equal any other address other than test unit set owner', async () => {
+        const contract = await Poetry.new(version, { from: owner });
+        const contractOwner = await contract.owner.call();
+        assert.notEqual(contractOwner, allowed);
+        assert.notEqual(contractOwner, unallowed);
+    });
 });
