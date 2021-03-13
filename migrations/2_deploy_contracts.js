@@ -8,9 +8,10 @@ module.exports = function(deployer) {
                 address: poetry.address,
                 abi: poetry.abi
             }
-            fs.writeFileSync('./contractData.json', JSON.stringify(contractData, null, '\t', 'utf-8'));
             if (process.env.ENV === 'DEVELOPMENT') {
                 fs.writeFileSync('../../../appdata/contractData.json', JSON.stringify(contractData, null, '\t', 'utf-8'));
+            } else if (process.env.ENV === 'PRODUCTION') {
+                fs.writeFileSync('./contractData.json', JSON.stringify(contractData, null, '\t', 'utf-8'));
             }
         });
 }
